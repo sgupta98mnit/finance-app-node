@@ -6,6 +6,7 @@ import { AccountsProxyController } from './accounts/accounts.proxy.controller';
 import { AuthProxyController } from './auth/auth.proxy.controller';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { RolesGuard } from './auth/roles.guard';
+import { LedgerProxyController } from './ledger/ledger.proxy.controller';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { RolesGuard } from './auth/roles.guard';
       global: true
     })
   ],
-  controllers: [AppController, AuthProxyController, AccountsProxyController],
+  controllers: [AppController, AuthProxyController, AccountsProxyController, LedgerProxyController],
   providers: [JwtAuthGuard, RolesGuard]
 })
 export class AppModule {}
