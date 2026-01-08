@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { JwtModule } from '@nestjs/jwt';
 import { AppController } from './app.controller';
+import { AccountsProxyController } from './accounts/accounts.proxy.controller';
 import { AuthProxyController } from './auth/auth.proxy.controller';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { RolesGuard } from './auth/roles.guard';
@@ -13,7 +14,7 @@ import { RolesGuard } from './auth/roles.guard';
       global: true
     })
   ],
-  controllers: [AppController, AuthProxyController],
+  controllers: [AppController, AuthProxyController, AccountsProxyController],
   providers: [JwtAuthGuard, RolesGuard]
 })
 export class AppModule {}
