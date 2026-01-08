@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EntryDirection {
+  DEBIT
+  CREDIT
+}
+
+model LedgerTransaction {
+  id            String        @id @default(uuid())
+  correlationId String?
+  description   String?
+  createdAt     DateTime      @default(now())
+  entries       LedgerEntry[]
+
+  @@index([correlationId])
+}
+
+model LedgerEntry {
+  id             String          @id @default(uuid())
+  transactionId  String
+  accountId      String
+  direction      EntryDirection
+  amount         Decimal
+  currency       String
+  createdAt      DateTime        @default(now())
+
+  transaction LedgerTransaction @relation(fields: [transactionId], references: [id], onDelete: Restrict)
+
+  @@index([accountId])
+  @@index([transactionId])
+}
