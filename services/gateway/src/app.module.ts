@@ -1,7 +1,19 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
+import { JwtModule } from '@nestjs/jwt';
 import { AppController } from './app.controller';
+import { AuthProxyController } from './auth/auth.proxy.controller';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { RolesGuard } from './auth/roles.guard';
 
 @Module({
-  controllers: [AppController]
+  imports: [
+    HttpModule,
+    JwtModule.register({
+      global: true
+    })
+  ],
+  controllers: [AppController, AuthProxyController],
+  providers: [JwtAuthGuard, RolesGuard]
 })
 export class AppModule {}
