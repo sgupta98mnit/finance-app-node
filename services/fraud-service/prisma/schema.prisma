@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model FraudRule {
+  id                   String  @id
+  maxDailyAmount       Decimal @default(10000)
+  maxTransfersPerMinute Int     @default(10)
+  maxBurstCount        Int     @default(5)
+  burstWindowMinutes   Int     @default(2)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model BlacklistedSubject {
+  id        String   @id @default(uuid())
+  subjectId String   @unique
+  reason    String?
+  createdAt DateTime @default(now())
+}
+
+model FraudCheckRecord {
+  id         String   @id @default(uuid())
+  transferId String   @unique
+  subjectId  String
+  amount     Decimal
+  currency   String
+  approved   Boolean
+  reasons    String[]
+  createdAt  DateTime @default(now())
+
+  @@index([subjectId])
+  @@index([createdAt])
+}
