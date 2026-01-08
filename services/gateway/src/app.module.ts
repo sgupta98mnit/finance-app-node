@@ -7,6 +7,7 @@ import { AuthProxyController } from './auth/auth.proxy.controller';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { RolesGuard } from './auth/roles.guard';
 import { LedgerProxyController } from './ledger/ledger.proxy.controller';
+import { MetricsModule } from './metrics/metrics.module';
 import { TransfersProxyController } from './transfers/transfers.proxy.controller';
 
 @Module({
@@ -14,7 +15,8 @@ import { TransfersProxyController } from './transfers/transfers.proxy.controller
     HttpModule,
     JwtModule.register({
       global: true
-    })
+    }),
+    MetricsModule
   ],
   controllers: [
     AppController,

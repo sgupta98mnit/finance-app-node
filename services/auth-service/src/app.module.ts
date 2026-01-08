@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
+import { MetricsModule } from './metrics/metrics.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -12,7 +13,8 @@ import { PrismaModule } from './prisma/prisma.module';
       }
     ]),
     PrismaModule,
-    AuthModule
+    AuthModule,
+    MetricsModule
   ]
 })
 export class AppModule {}

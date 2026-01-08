@@ -1,11 +1,13 @@
 import 'reflect-metadata';
+import './observability/otel';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { PinoLogger } from './observability/logger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn', 'log']
+    logger: new PinoLogger()
   });
 
   const config = new DocumentBuilder()
