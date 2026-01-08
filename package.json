@@ -3,7 +3,8 @@
   "private": true,
   "workspaces": [
     "services/*",
-    "libs/*"
+    "libs/*",
+    "ui"
   ],
   "scripts": {
     "start:gateway": "npm --workspace services/gateway run start:dev",
