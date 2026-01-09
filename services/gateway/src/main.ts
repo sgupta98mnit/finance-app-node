@@ -10,6 +10,11 @@ async function bootstrap() {
     logger: new PinoLogger()
   });
 
+  app.enableCors({
+    origin: true,
+    credentials: true
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Gateway')
     .setDescription('API Gateway')

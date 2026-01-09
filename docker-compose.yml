@@ -8,17 +8,12 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - '2181:2181'
-    healthcheck:
-      test: ['CMD', 'bash', '-c', 'echo ruok | nc -w 2 localhost 2181 | grep imok']
-      interval: 10s
-      timeout: 5s
-      retries: 6
 
   kafka:
     image: confluentinc/cp-kafka:7.6.1
     depends_on:
       zookeeper:
-        condition: service_healthy
+        condition: service_started
     ports:
       - '9092:9092'
     environment:
@@ -150,3 +145,172 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
+
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      args:
+        SERVICE_PATH: services/gateway
+    environment:
+      PORT: 3000
+      AUTH_SERVICE_URL: http://auth-service:3001
+      ACCOUNT_SERVICE_URL: http://account-service:3002
+      LEDGER_SERVICE_URL: http://ledger-service:3003
+      TRANSACTION_SERVICE_URL: http://transaction-service:3004
+      JWT_ACCESS_SECRET: dev_access_secret
+      OTEL_SERVICE_NAME: gateway
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+      LOG_LEVEL: info
+    ports:
+      - '3000:3000'
+    depends_on:
+      auth-service:
+        condition: service_started
+      account-service:
+        condition: service_started
+      ledger-service:
+        condition: service_started
+      transaction-service:
+        condition: service_started
+      fraud-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      args:
+        SERVICE_PATH: services/auth-service
+    environment:
+      PORT: 3001
+      DATABASE_URL: postgresql://auth_user:auth_pass@postgres-auth:5432/auth_db
+      JWT_ACCESS_SECRET: dev_access_secret
+      JWT_REFRESH_SECRET: dev_refresh_secret
+      JWT_ACCESS_TTL: 15m
+      JWT_REFRESH_TTL: 7d
+      OTEL_SERVICE_NAME: auth-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+      LOG_LEVEL: info
+    ports:
+      - '3001:3001'
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+
+  account-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      args:
+        SERVICE_PATH: services/account-service
+    environment:
+      PORT: 3002
+      DATABASE_URL: postgresql://account_user:account_pass@postgres-account:5432/account_db
+      KAFKA_BROKER: kafka:9092
+      OTEL_SERVICE_NAME: account-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+      LOG_LEVEL: info
+    ports:
+      - '3002:3002'
+    depends_on:
+      postgres-account:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  ledger-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      args:
+        SERVICE_PATH: services/ledger-service
+    environment:
+      PORT: 3003
+      DATABASE_URL: postgresql://ledger_user:ledger_pass@postgres-ledger:5432/ledger_db
+      OTEL_SERVICE_NAME: ledger-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+      LOG_LEVEL: info
+    ports:
+      - '3003:3003'
+    depends_on:
+      postgres-ledger:
+        condition: service_healthy
+
+  transaction-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      args:
+        SERVICE_PATH: services/transaction-service
+    environment:
+      PORT: 3004
+      DATABASE_URL: postgresql://transaction_user:transaction_pass@postgres-transaction:5432/transaction_db
+      KAFKA_BROKER: kafka:9092
+      REDIS_URL: redis://redis:6379
+      OTEL_SERVICE_NAME: transaction-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+      LOG_LEVEL: info
+    ports:
+      - '3004:3004'
+    depends_on:
+      postgres-transaction:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  fraud-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      args:
+        SERVICE_PATH: services/fraud-service
+    environment:
+      PORT: 3005
+      DATABASE_URL: postgresql://fraud_user:fraud_pass@postgres-fraud:5432/fraud_db
+      KAFKA_BROKER: kafka:9092
+      OTEL_SERVICE_NAME: fraud-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+      LOG_LEVEL: info
+    ports:
+      - '3005:3005'
+    depends_on:
+      postgres-fraud:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      args:
+        SERVICE_PATH: services/notification-service
+    environment:
+      PORT: 3006
+      DATABASE_URL: postgresql://notification_user:notification_pass@postgres-notification:5432/notification_db
+      KAFKA_BROKER: kafka:9092
+      OTEL_SERVICE_NAME: notification-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+      LOG_LEVEL: info
+    ports:
+      - '3006:3006'
+    depends_on:
+      postgres-notification:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    ports:
+      - '5173:5173'
+    depends_on:
+      gateway:
+        condition: service_started
