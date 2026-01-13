@@ -163,7 +163,7 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
       LOG_LEVEL: info
     ports:
-      - '3000:3000'
+      - '3008:3000'
     depends_on:
       auth-service:
         condition: service_started

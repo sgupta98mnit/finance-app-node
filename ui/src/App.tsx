@@ -137,7 +137,7 @@ const services: ServiceNode[] = [
 const observabilityLinks = [
   { label: 'Prometheus', url: 'http://localhost:9090' },
   { label: 'Grafana', url: 'http://localhost:3007' },
-  { label: 'Swagger Gateway', url: 'http://localhost:3000/docs' },
+  { label: 'Swagger Gateway', url: 'http://localhost:3008/docs' },
   { label: 'OTel Collector', url: 'http://localhost:4318' }
 ];
 
@@ -145,7 +145,7 @@ export default function App() {
   const [active, setActive] = useState<NavKey>('overview');
   const now = useMemo(() => new Date().toLocaleString(), []);
   const [baseUrl, setBaseUrl] = useState(
-    () => localStorage.getItem('fintech.baseUrl') || 'http://localhost:3000'
+    () => localStorage.getItem('fintech.baseUrl') || 'http://localhost:3008'
   );
   const [token, setToken] = useState(() => localStorage.getItem('fintech.token') || '');
   const [status, setStatus] = useState<string>('Idle');

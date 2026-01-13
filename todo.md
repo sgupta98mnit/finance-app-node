@@ -1,0 +1,3 @@
+- Modified `docker-compose.yml` to map the `gateway` service to port `3008` on the host.
+- Updated the default `baseUrl` in `ui/src/App.tsx` to `http://localhost:3008`.
+- Updated the "Swagger Gateway" link in `ui/src/App.tsx` to `http://localhost:3008/docs`.
