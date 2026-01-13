@@ -5,6 +5,8 @@ export default defineConfig({
   plugins: [react()],
   base: '/projects/finance-app/',
   server: {
-    port: 5173
+    host: '0.0.0.0',
+    port: 5173,
+    allowedHosts: ['sumit-gupta.cloud', 'www.sumit-gupta.cloud'],
   }
 });
