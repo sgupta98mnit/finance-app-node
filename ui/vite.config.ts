@@ -1,12 +1,19 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
+  base: "/projects/fincore/",
   plugins: [react()],
-  base: '/projects/fincore/',
   server: {
-    host: '0.0.0.0',
+    host: true,
     port: 5173,
-    allowedHosts: ['sumit-gupta.cloud', 'www.sumit-gupta.cloud'],
-  }
+    strictPort: true,
+    allowedHosts: ["sumit-gupta.cloud", "www.sumit-gupta.cloud"],
+  },
+  preview: {
+    host: true,
+    port: 5173,
+    strictPort: true,
+  },
 });
+

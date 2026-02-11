@@ -2,10 +2,19 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY . .
+# copy only manifests first for caching
+COPY package*.json ./
+
+# if you use workspaces, also copy workspace package.json files
+COPY services/*/package*.json ./services/
+
 RUN npm install
+
+COPY . .
 
 ARG SERVICE_PATH
 ENV SERVICE_PATH=${SERVICE_PATH}
 
-CMD ["sh", "-c", "npm --workspace ${SERVICE_PATH} run start:dev"]
+# production start (change to start if that’s your script name)
+CMD ["sh", "-c", "npm --workspace ${SERVICE_PATH} run start"]
+
